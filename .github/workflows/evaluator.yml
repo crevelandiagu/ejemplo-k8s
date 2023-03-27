@@ -1,0 +1,31 @@
+name: Evaluator
+on: workflow_dispatch
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+          registry-url: https://registry.npmjs.org/
+      - name: Set up yq
+        uses: mikefarah/yq@v4.30.8
+      - name: Save port to env variable
+        run: echo "INGRESS_PATH=$(yq '.url' config.yaml)" >> $GITHUB_ENV
+      - name: Download entrega1 postman collection
+        uses: wei/curl@master
+        with:
+          args: https://raw.githubusercontent.com/MISW-4301-Desarrollo-Apps-en-la-Nube/202311-project-evaluator/main/entrega2/entrega1.json --output entrega1.json
+      - name: Download entrega2 postman collection
+        uses: wei/curl@master
+        with:
+          args: https://raw.githubusercontent.com/MISW-4301-Desarrollo-Apps-en-la-Nube/202311-project-evaluator/main/entrega2/entrega2.json --output entrega2.json
+      - name: Install newman
+        run: npm install -g newman
+#      - name: Test entrega 1
+#        run: newman run "entrega1.json" --env-var INGRESS_PATH=$INGRESS_PATH
+      - name: Test entrega 2
+        run: newman run "entrega2.json" --env-var INGRESS_PATH=$INGRESS_PATH

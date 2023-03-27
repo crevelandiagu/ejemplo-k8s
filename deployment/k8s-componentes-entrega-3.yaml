@@ -1,0 +1,120 @@
+###################################
+# users
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  labels:
+    app: users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: us-central1-docker.pkg.dev/terminus-grupo25/docker-terminus25/users:1.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: USERS_URL
+              value: http://servicio-users/
+            - name: VERIFICACION_WEBHOOK
+              value: http://servicio-verificacion/verifying/webhook
+            - name: VERIFICACION_URL
+              value: http://servicio-verificacion/
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: users-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3000
+    type: HTTP
+    requestPath: /users/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-users
+  annotations:
+    cloud.google.com/backend-config: '{"default": "users-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: users
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 31020
+---
+###################################
+# verificacion
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verificacion
+  labels:
+    app: verificacion
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: verificacion
+  template:
+    metadata:
+      labels:
+        app: verificacion
+    spec:
+      containers:
+        - name: verificacion
+          image: us-central1-docker.pkg.dev/terminus-grupo25/docker-terminus25/verificacion:1.0
+          ports:
+            - containerPort: 3011
+          env:
+            - name: TRUENATIVE_URL
+              value: http://servicio-truenative/
+            - name: SECRET_TOKEN
+              value: D2hVX^2Z60HaQX5*9eZW
+
+          imagePullPolicy: Always
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: verificacion-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3011
+    type: HTTP
+    requestPath: /verifying/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-verificacion
+  annotations:
+    cloud.google.com/backend-config: '{"default": "verificacion-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: verificacion
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3011
+      nodePort: 31033
+---

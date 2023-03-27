@@ -1,0 +1,33 @@
+team: Terminus
+board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/69
+url: 34.149.55.158
+user-management:
+  folder: users
+  port: 3000
+  authors:
+    - c.velandiag@uniandes.edu.co
+post-management:
+  folder: servicio_publicaciones
+  port: 3001
+  authors:
+    - ca.castrov12@uniandes.edu.co
+offer-management:
+  folder: offers
+  port: 3003
+  authors:
+    - je.bedoya@uniandes.edu.co
+journey-management:
+  folder: servicio_trayectos
+  port: 3002
+  authors:
+    - d.huertasm@uniandes.edu.co
+Score-management:
+  folder: public
+  port: 3010
+  authors:
+    - c.velandiag@uniandes.edu.co
+validate-user:
+  folder: verificacion
+  port: 3011
+  authors:
+    - c.velandiag@uniandes.edu.co

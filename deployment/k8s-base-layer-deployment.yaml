@@ -1,0 +1,227 @@
+###################################
+# users
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  labels:
+    app: users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: us-central1-docker.pkg.dev/terminus-grupo25/docker-terminus25/users:1.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: USERS_URL
+              value: http://servicio-users/
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: users-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3000
+    type: HTTP
+    requestPath: /users/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-users
+  annotations:
+    cloud.google.com/backend-config: '{"default": "users-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: users
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 31020
+---
+###################################
+# trayectos
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trayectos
+  labels:
+    app: trayectos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trayectos
+  template:
+    metadata:
+      labels:
+        app: trayectos
+    spec:
+      containers:
+        - name: trayectos
+          image: us-central1-docker.pkg.dev/terminus-grupo25/docker-terminus25/trayectos:1.0
+          ports:
+            - containerPort: 3002
+          env:
+            - name: USERS_URL
+              value: http://servicio-users/
+          imagePullPolicy: Always
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: trayectos-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3002
+    type: HTTP
+    requestPath: /routes/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-trayectos
+  annotations:
+    cloud.google.com/backend-config: '{"default": "trayectos-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: trayectos
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3002
+      nodePort: 31022
+---
+###################################
+# publicaciones
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publicaciones
+  labels:
+    app: publicaciones
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: publicaciones
+  template:
+    metadata:
+      labels:
+        app: publicaciones
+    spec:
+      containers:
+        - name: publicaciones
+          image: us-central1-docker.pkg.dev/terminus-grupo25/docker-terminus25/publicaciones:1.0
+          ports:
+            - containerPort: 3001
+          env:
+            - name: USERS_URL
+              value: http://servicio-users/
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: publicaciones-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3001
+    type: HTTP
+    requestPath: /posts/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-publicaciones
+  annotations:
+    cloud.google.com/backend-config: '{"default": "publicaciones-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: publicaciones
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001
+      nodePort: 31021
+---
+###################################
+# offers
+###################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: offers
+  labels:
+    app: offers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: offers
+  template:
+    metadata:
+      labels:
+        app: offers
+    spec:
+      containers:
+        - name: offers
+          image: us-central1-docker.pkg.dev/terminus-grupo25/docker-terminus25/offers:1.0
+          ports:
+            - containerPort: 3003
+          env:
+            - name: USERS_URL
+              value: http://servicio-users/
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: offers-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3003
+    type: HTTP
+    requestPath: /offers/ping
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: servicio-offers
+  annotations:
+    cloud.google.com/backend-config: '{"default": "offers-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: offers
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3003
+      nodePort: 31023
+---
