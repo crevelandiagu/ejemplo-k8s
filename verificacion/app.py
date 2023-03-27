@@ -16,7 +16,7 @@ app.url_map.strict_slashes = False
 username = os.getenv('DB_USER', 'admin')
 password = os.getenv('DB_PASSWORD', 'admin')
 dbname = os.getenv('DB_NAME', 'terminus_db')
-hostname = os.getenv('DB_HOST', '34.135.18.78')
+hostname = os.getenv('DB_HOST', '')
 
 if os.getenv('TEST_APP', "False") == 'True':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'

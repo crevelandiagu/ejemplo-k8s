@@ -17,7 +17,7 @@ username = os.getenv('DB_USER', 'admin')
 password = os.getenv('DB_PASSWORD', 'admin')
 dbname = os.getenv('DB_NAME', 'usuarios_db')
 hostname = os.getenv('DB_HOST', 'db_usuarios')
-url_posgres = os.getenv('DATABASE_URL', 'postgresql://admin:admin@34.135.18.78:5432/terminus_db')
+url_posgres = os.getenv('DATABASE_URL', 'postgresql://admin:admin@/terminus_db')
 
 if os.getenv('TEST_APP', 'False') == 'True':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
